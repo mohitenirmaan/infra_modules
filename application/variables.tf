@@ -101,7 +101,7 @@ variable "target_port" {
 }
 variable "health_check" {
   type    = list(object({
-    path          = string
+    path          = list(string)
     interval      = string
     protocol      = string
     matcher       = string
