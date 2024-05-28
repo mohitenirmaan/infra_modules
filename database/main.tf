@@ -8,6 +8,7 @@ resource "aws_security_group" "rds_sg" {
     protocol    = "TCP"
     cidr_blocks = ["10.0.2.0/24"]
   }
+  tags = merge(var.tags)
 }
 resource "aws_db_subnet_group" "rds_subnet_group" {
   name       = var.db_subnet_group_name
