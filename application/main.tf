@@ -86,7 +86,7 @@
       }
       target_value = var.target_value # Adjust the target value as needed
     }
-      scaling_in_cooldown = 600
+    cooldown = 600
     lifecycle {
       create_before_destroy = true
     }
