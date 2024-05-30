@@ -148,34 +148,23 @@
     tags = merge(var.tags,)
   }
 
-  resource "aws_alb_listener" "http_listener" {
-    load_balancer_arn = aws_lb.pub_alb.id
-    port              = var.listener_port
-    protocol          = var.listener_protocol
-
-  default_action {
-      type             = "forward"
-      target_group_arn = aws_lb_target_group.target_groups[0].arn
-    }
-
-  }
-  # resource "aws_lb_listener" "https_listener" {
-  #   load_balancer_arn = aws_lb.pub_alb.id
-  #   port              = var.listener_port
-  #   protocol          = var.listener_protocol
-
-  #   ssl_policy        = "ELBSecurityPolicy-2016-08"
-  #   certificate_arn   = aws_acm_certificate.my_certificate[0].arn
+ 
+   resource "aws_lb_listener" "https_listener" {
+     load_balancer_arn = aws_lb.pub_alb.id
+     port              = var.listener_port
+     protocol          = var.listener_protocol
+     ssl_policy        = var.ssl_policy  # "ELBSecurityPolicy-2016-08"
+     certificate_arn   = var.certificate_arn 
 
 
-  #   default_action {
-  #     type             = "forward"
-  #     target_group_arn = aws_lb_target_group.target_groups[0].arn
-  #   }
-  # }
+     default_action {
+       type             = "forward"
+       target_group_arn = aws_lb_target_group.target_groups[0].arn
+     }
+   }
   resource "aws_lb_listener_rule" "domain_based_rules" {
     count       = length(var.listener_rules)
-    listener_arn = aws_alb_listener.http_listener.arn
+    listener_arn = aws_lb_listener.https_listener.arn
 
     action {
       type             = "forward"
