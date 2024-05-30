@@ -86,6 +86,7 @@
       }
       target_value = var.target_value # Adjust the target value as needed
     }
+      scaling_in_cooldown = 600
     lifecycle {
       create_before_destroy = true
     }
@@ -110,14 +111,6 @@
     timeout             = var.health_check[count.index].timeout
     unhealthy_threshold = var.health_check[count.index].unhealthy_threshold
     healthy_threshold   = var.health_check[count.index].healthy_threshold
-  
-      # path                = var.health_path[count.index]
-      # interval            = "30"
-      # protocol            = var.target_protocol
-      # matcher             = "200"
-      # timeout             = "5"
-      # unhealthy_threshold = "2"
-      # healthy_threshold   = "3"
     }
     tags = merge(var.tags)
   }
@@ -133,20 +126,20 @@
   # }
 
 
-  resource "aws_lb" "pub_alb" {
-    name               = var.Alb_name  
-    internal           = var.internal
-    load_balancer_type = var.Alb_type
-    security_groups    = [aws_security_group.security_grp[1].id]
-    subnets            = var.public_subnet_ids
-    enable_deletion_protection = var.enable_deletion_protection
-    # access_logs {
-    #   bucket  = aws_s3_bucket.lb_logs.id
-    #   prefix  = "test-lb"
-    #   enabled = true
-    # }
-    tags = merge(var.tags,)
-  }
+   resource "aws_lb" "pub_alb" {
+      name               = var.Alb_name  
+      internal           = var.internal
+      load_balancer_type = var.Alb_type
+      security_groups    = [aws_security_group.security_grp[1].id]
+      subnets            = var.public_subnet_ids
+      enable_deletion_protection = var.enable_deletion_protection
+      # access_logs {
+      #   bucket  = aws_s3_bucket.lb_logs.id
+      #   prefix  = "test-lb"
+      #   enabled = true
+      # }
+      tags = merge(var.tags,)
+    }
 
  
    resource "aws_lb_listener" "https_listener" {
@@ -156,12 +149,12 @@
      ssl_policy        = var.ssl_policy  # "ELBSecurityPolicy-2016-08"
      certificate_arn   = var.certificate_arn 
 
-
      default_action {
        type             = "forward"
        target_group_arn = aws_lb_target_group.target_groups[0].arn
      }
    }
+
   resource "aws_lb_listener_rule" "domain_based_rules" {
     count       = length(var.listener_rules)
     listener_arn = aws_lb_listener.https_listener.arn
