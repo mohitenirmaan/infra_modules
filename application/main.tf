@@ -28,7 +28,7 @@
   
   resource "aws_launch_template" "API-template" {
     count = length(var.template_name)
-    name_prefix = var.template_name[count.index]
+    name  = var.template_name[count.index]
     
     block_device_mappings {
       device_name = var.block_device_name[count.index]
