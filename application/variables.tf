@@ -140,6 +140,12 @@ variable "listener_port" {
 variable "listener_protocol" {
     type = string
 }
+variable "ssl_policy" {
+    type = string
+}
+variable "certificate_arn" {
+    type = string
+}
 ////////////////////////////////
 variable "listener_rules" {
   type    = list(object({
