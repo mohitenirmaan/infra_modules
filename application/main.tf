@@ -1,4 +1,4 @@
-  # ============security group=======================
+  # ============security group======================= #
 
   resource "aws_security_group" "security_grp" {
     count = length(var.security_groups)
@@ -25,11 +25,29 @@
   } 
     tags = merge(var.tags,)
   }
-  
+# ============Elastic file Storage=================#
+  resource "aws_efs_file_system" "en-efs" {
+    creation_token = var.creation_token # "EFS for My Application"
+  }
+  resource "aws_efs_mount_target" "efs_mount_target" {
+    for_each          = toset([var.private_subnet_ids])
+    file_system_id = aws_efs_file_system.en-efs.id
+    subnet_id      = each.value
+
+    # Security group allowing access from instances
+    security_groups = [aws_security_group.security_grp[2].id]
+  }
+
+# ============Launch Template======================= #
+
   resource "aws_launch_template" "API-template" {
     count = length(var.template_name)
     name  = var.template_name[count.index]
-    
+    image_id               = var.image_ids[count.index]
+    instance_type          = var.instance_types[count.index]
+    key_name               = var.key_names[count.index]
+    vpc_security_group_ids = [aws_security_group.security_grp[count.index + 2].id]
+      
     block_device_mappings {
       device_name = var.block_device_name[count.index]
       ebs {
@@ -37,15 +55,19 @@
         delete_on_termination = true
       }
     }
-      image_id               = var.image_ids[count.index]
-      instance_type          = var.instance_types[count.index]
-      key_name               = var.key_names[count.index]
-      vpc_security_group_ids = [aws_security_group.security_grp[count.index + 2].id]
-      
+    user_data = <<-EOF
+              #!/bin/bash
+              sudo apt-get update
+              sudo apt-get install -y amazon-efs-utils
+              sudo apt-get install -y nfs-common
+              mkdir -p /mnt/efs
+              sudo mount -t efs -o tls ${aws_efs_file_system.en-efs.id}:/ /mnt/efs
+              echo "${aws_efs_file_system.en-efs.id}:/ /mnt/efs efs defaults,_netdev 0 0" >> /etc/fstab
+              EOF
     tags = merge(var.tags,)
   }
 
-  #=======================ASG======================
+#=======================ASG======================
   resource "aws_autoscaling_group" "API-asg" {
     count = length(var.asg_name)
 
@@ -70,7 +92,7 @@
     }
   }
 
-  #===================Target Scalng Policy=================
+#===================Target Scalng Policy=================
   resource "aws_autoscaling_policy" "cpu-policy" {
     count                     = length(aws_autoscaling_group.API-asg[*].id)
     name                      = aws_autoscaling_group.API-asg[count.index].id
@@ -93,7 +115,7 @@
 
   }
 
-  #----------------------ALB---------------------------#
+#=================Load balancer===================#
 
   resource "aws_lb_target_group" "target_groups" {
     count       = length(var.target_group_name)
@@ -125,7 +147,6 @@
   #   }
   # }
 
-
    resource "aws_lb" "pub_alb" {
       name               = var.Alb_name  
       internal           = var.internal
@@ -140,7 +161,6 @@
       # }
       tags = merge(var.tags,)
     }
-
  
    resource "aws_lb_listener" "https_listener" {
      load_balancer_arn = aws_lb.pub_alb.id
