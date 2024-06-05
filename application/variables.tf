@@ -28,6 +28,9 @@ variable "security_groups" {
     }))
   }))
 }
+variable "creation_token" {
+  type = string
+}
 variable "egress-cidr_blocks" {
   type = list(string)
 }
