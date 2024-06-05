@@ -30,7 +30,9 @@
     creation_token = var.creation_token # "EFS for My Application"
   }
   resource "aws_efs_mount_target" "efs_mount_target" {
-    for_each          = toset([var.private_subnet_ids])
+    for_each = {
+    for k, v in slice(var.private_subnet_ids, 0, 2) : k => v
+    }
     file_system_id = aws_efs_file_system.en-efs.id
     subnet_id      = each.value
 
