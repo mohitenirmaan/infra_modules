@@ -12,11 +12,11 @@ resource "aws_security_group" "rds_sg" {
 }
 
 resource "aws_instance" "db_server" {
-    instance_type               = lookup(var.static_db, "itype")
+    instance_type               = lookup(var.db_instance_config, "itype")
     subnet_id                   = var.private_subnet_ids[0]
-    ami                         = lookup(var.static_db, "ami")
-    associate_public_ip_address = lookup(var.static_db, "publicip")
-    key_name                    = lookup(var.static_db, "keyname")
+    ami                         = lookup(var.db_instance_config, "ami")
+    associate_public_ip_address = lookup(var.db_instance_config, "publicip")
+    key_name                    = lookup(var.db_instance_config, "keyname")
     vpc_security_group_ids      = [aws_security_group.rds_sg.id]
     
     tags = merge(
