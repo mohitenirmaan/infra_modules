@@ -1,3 +1,3 @@
 output "db_instance_endpoint" {
-  value = aws_db_instance.db_server.id
+  value = aws_instance.db_server.id
 }
