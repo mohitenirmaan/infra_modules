@@ -84,7 +84,7 @@
     health_check_grace_period = var.health_check_grace_period
     health_check_type         = var.health_check_type
     force_delete              = true
-    vpc_zone_identifier       = slice(var.private_subnet_ids, 0, 2) # var.private_subnet_ids
+    vpc_zone_identifier       = slice(var.private_subnet_ids, 0, 1)
     target_group_arns         = [aws_lb_target_group.target_groups[count.index].arn]  # Assigning the target group ARN
 
     tag {
