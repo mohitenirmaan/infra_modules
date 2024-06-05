@@ -26,9 +26,14 @@
     tags = merge(var.tags,)
   }
 # ============Elastic file Storage=================#
+  
   resource "aws_efs_file_system" "en-efs" {
-    creation_token = var.creation_token # "EFS for My Application"
+    creation_token = var.creation_token
+    lifecycle_policy {
+    transition_to_ia = "AFTER_30_DAYS"
+    }
   }
+
   resource "aws_efs_mount_target" "efs_mount_target" {
     for_each = {
     for k, v in slice(var.private_subnet_ids, 0, 2) : k => v
@@ -57,7 +62,7 @@
         delete_on_termination = true
       }
     }
-    user_data = <<-EOF
+    user_data = base64encode(<<-EOF
               #!/bin/bash
               sudo apt-get update
               sudo apt-get install -y amazon-efs-utils
@@ -66,6 +71,7 @@
               sudo mount -t efs -o tls ${aws_efs_file_system.en-efs.id}:/ /mnt/efs
               echo "${aws_efs_file_system.en-efs.id}:/ /mnt/efs efs defaults,_netdev 0 0" >> /etc/fstab
               EOF
+      )
     tags = merge(var.tags,)
   }
 
