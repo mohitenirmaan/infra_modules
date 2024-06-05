@@ -10,42 +10,82 @@ resource "aws_security_group" "rds_sg" {
   }
   tags = merge(var.tags)
 }
-resource "aws_db_subnet_group" "rds_subnet_group" {
-  name       = var.db_subnet_group_name
-  subnet_ids = var.private_subnet_ids
-  # subnet_ids = [
-  #   data.aws_subnet.az1_subnet.id,
-  #   data.aws_subnet.az2_subnet.id,
-  # ]
-  tags = merge(var.tags)
-}
-resource "aws_db_instance" "en_database" {
-  allocated_storage                   = var.db_instance_config.allocated_storage
-  max_allocated_storage               = var.db_instance_config.max_allocated_storage
-  storage_type                        = var.db_instance_config.storage_type
-  identifier                          = var.db_instance_config.identifier
-  engine                              = var.db_instance_config.engine_name
-  engine_version                      = var.db_instance_config.engine_version
-  instance_class                      = var.db_instance_config.instance_class
-  username                            = var.db_instance_config.username
-  password                            = var.db_instance_config.password
-  iam_database_authentication_enabled = var.db_instance_config.iam_database_authentication_enabled
-  multi_az                            = var.db_instance_config.multi_az
-  performance_insights_enabled        = var.db_instance_config.performance_insights_enabled
-  deletion_protection                 = var.db_instance_config.deletion_protection
-  publicly_accessible                 = var.db_instance_config.public_access
-  vpc_security_group_ids              = [aws_security_group.rds_sg.id]
-  db_subnet_group_name                = aws_db_subnet_group.rds_subnet_group.name
-  availability_zone                   = var.db_instance_config.availability_zone
-  port                                = var.db_instance_config.port
-  parameter_group_name                = var.db_instance_config.parameter_group_name
-  backup_retention_period             = var.db_instance_config.backup_retention_period
-  backup_window                       = var.db_instance_config.backup_window
-  maintenance_window                  = var.db_instance_config.maintenance_window
-  delete_automated_backups            = var.db_instance_config.delete_automated_backups
-  skip_final_snapshot                 = var.db_instance_config.skip_final_snapshot
-   tags = merge(var.tags)
-}
+
+resource "aws_instance" "db_server" {
+    instance_type               = lookup(var.static_db, "itype")
+    subnet_id                   = var.private_subnet_ids[0]
+    ami                         = lookup(var.static_db, "ami")
+    associate_public_ip_address = lookup(var.static_db, "publicip")
+    key_name                    = lookup(var.static_db, "keyname")
+    vpc_security_group_ids      = [aws_security_group.rds_sg.id]
+    
+    tags = merge(
+    {
+      "Name" = format("%s-Db-Mysql", var.name)
+    },
+    var.tags, )
+  }
+#===============RDS======================# 
+# resource "aws_db_subnet_group" "rds_subnet_group" {
+#   name       = var.db_subnet_group_name
+#   subnet_ids = var.private_subnet_ids
+#   # subnet_ids = [
+#   #   data.aws_subnet.az1_subnet.id,
+#   #   data.aws_subnet.az2_subnet.id,
+#   # ]
+#   tags = merge(var.tags)
+# }
+
+# resource "aws_db_instance" "en_database" {
+#   allocated_storage                   = var.db_instance_config.allocated_storage
+#   max_allocated_storage               = var.db_instance_config.max_allocated_storage
+#   storage_type                        = var.db_instance_config.storage_type
+#   identifier                          = var.db_instance_config.identifier
+#   engine                              = var.db_instance_config.engine_name
+#   engine_version                      = var.db_instance_config.engine_version
+#   instance_class                      = var.db_instance_config.instance_class
+#   username                            = var.db_instance_config.username
+#   password                            = var.db_instance_config.password
+#   iam_database_authentication_enabled = var.db_instance_config.iam_database_authentication_enabled
+#   multi_az                            = var.db_instance_config.multi_az
+#   performance_insights_enabled        = var.db_instance_config.performance_insights_enabled
+#   deletion_protection                 = var.db_instance_config.deletion_protection
+#   publicly_accessible                 = var.db_instance_config.public_access
+#   vpc_security_group_ids              = [aws_security_group.rds_sg.id]
+#   db_subnet_group_name                = aws_db_subnet_group.rds_subnet_group.name
+#   availability_zone                   = var.db_instance_config.availability_zone
+#   port                                = var.db_instance_config.port
+#   parameter_group_name                = var.db_instance_config.parameter_group_name
+#   backup_retention_period             = var.db_instance_config.backup_retention_period
+#   backup_window                       = var.db_instance_config.backup_window
+#   maintenance_window                  = var.db_instance_config.maintenance_window
+#   delete_automated_backups            = var.db_instance_config.delete_automated_backups
+#   skip_final_snapshot                 = var.db_instance_config.skip_final_snapshot
+#    tags = merge(var.tags)
+# }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # resource "aws_db_instance" "en_database" {
