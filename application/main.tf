@@ -29,10 +29,11 @@
   
   resource "aws_efs_file_system" "en-efs" {
     creation_token = var.creation_token
-    encrypted = True
+    encrypted = true
+    throughput_mode = "elastic"
     lifecycle_policy {
-    transition_to_ia = "AFTER_30_DAYS"
-    transition_to_archive = "AFTER_60_DAYS"
+    transition_to_ia = "AFTER_14_DAYS"
+    transition_to_archive = "AFTER_30_DAYS"
     }
   }
 
