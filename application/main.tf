@@ -66,7 +66,7 @@
     }
     user_data = base64encode(<<-EOF
               #!/bin/bash
-              EFS_ID="${aws_efs_file_system.example.id}"
+              EFS_ID="${aws_efs_file_system.en-efs.id}"
               REGION="us-east-1"
               MOUNT_POINT="/var/www/beta.ibai.org/public_html/storage/"
 
