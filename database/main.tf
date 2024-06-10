@@ -8,6 +8,12 @@ resource "aws_security_group" "rds_sg" {
     protocol    = "TCP"
     cidr_blocks = ["10.0.2.0/24"]
   }
+  egress {
+      from_port   = 0
+      to_port     = 0
+      protocol    = "-1"
+      cidr_blocks = var.egress-cidr_blocks
+  } 
   tags = merge(var.tags)
 }
 
