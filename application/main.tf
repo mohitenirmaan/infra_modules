@@ -66,13 +66,18 @@
     }
     user_data = base64encode(<<-EOF
               #!/bin/bash
+              EFS_ID="${aws_efs_file_system.example.id}"
+              REGION="us-east-1"
+              MOUNT_POINT="/var/www/beta.ibai.org/public_html/storage"
+
               sudo apt-get update
-              sudo apt-get install -y amazon-efs-utils
-              sudo apt-get install -y nfs-common
-              mkdir -p /mnt/efs
-              sudo mount -t efs -o tls ${aws_efs_file_system.en-efs.id}:/ /mnt/efs
-              echo "${aws_efs_file_system.en-efs.id}:/ /mnt/efs efs defaults,_netdev 0 0" >> /etc/fstab
-              EOF
+              sudo apt-get install -y amazon-efs-utils nfs-common
+
+              sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport $EFS_ID.efs.$REGION.amazonaws.com:/ $MOUNT_POINT
+
+              # Add the mount to /etc/fstab for persistence
+              echo "$EFS_ID.efs.$REGION.amazonaws.com:/ $MOUNT_POINT efs defaults,_netdev 0 0" | sudo tee -a /etc/fstab
+            EOF
       )
     tags = merge(var.tags,)
   }
