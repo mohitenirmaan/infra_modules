@@ -68,7 +68,7 @@
               #!/bin/bash
               EFS_ID="${aws_efs_file_system.en-efs.id}"
               REGION="us-east-1"
-              MOUNT_POINT="/var/www/beta.ibai.org/public_html/storage/"
+              MOUNT_POINT="/var/www/ibai.org/public_html/storage/"
 
               sudo apt-get update
               sudo apt-get install -y amazon-efs-utils nfs-common
