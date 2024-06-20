@@ -7,6 +7,9 @@ variable "public_subnet_ids" {
 variable "private_subnet_ids" {
  type = list(string) 
 }
+variable "efs_id" {
+  type = string
+}
 variable "name" {
   description = "Name that will include to every resources"
   type = string
@@ -27,9 +30,6 @@ variable "security_groups" {
       cidr_block  = list(string)
     }))
   }))
-}
-variable "creation_token" {
-  type = string
 }
 variable "egress-cidr_blocks" {
   type = list(string)
@@ -54,6 +54,9 @@ variable "key_names" {
 }
 variable "block_device_name" {
   type = list(string)
+}
+variable "mount_point" {
+  type = string
 }
 variable "env" {
   type    = string
