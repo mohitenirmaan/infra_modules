@@ -47,7 +47,7 @@
               #!/bin/bash
               EFS_ID="${var.efs_id}"
               REGION="us-east-1"
-              MOUNT_POINT="/var/www/ibai.org/public_html/storage/"
+              MOUNT_POINT="${var.mount_point}"
 
               sudo apt-get update
               sudo apt-get install -y amazon-efs-utils nfs-common
