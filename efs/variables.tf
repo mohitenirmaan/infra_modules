@@ -5,10 +5,6 @@ variable "security_group_ids" {
  type = list(string) 
 }
 
-variable "name" {
-  description = "Name that will include to every resources"
-  type = string
-}
 variable "tags" {
   description = "A map of tags to add to all resources"
   type        = map(string)
