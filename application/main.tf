@@ -48,10 +48,10 @@
               EFS_ID="${var.efs_id}"
               REGION="us-east-1"
               MOUNT_POINT="${var.mount_point}"
-
+              
               sudo apt-get update
               sudo apt-get install -y amazon-efs-utils nfs-common
-
+              mkdir -p "${var.mount_point}"
               sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport $EFS_ID.efs.$REGION.amazonaws.com:/ $MOUNT_POINT
 
               # Add the mount to /etc/fstab for persistence
