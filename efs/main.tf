@@ -2,13 +2,14 @@
   
   resource "aws_efs_file_system" "en-efs" {
     creation_token = var.creation_token
-    encrypted = true
-    throughput_mode = "elastic"
+    encrypted = var.encrypted
+    throughput_mode = var.throughput_mode
     lifecycle_policy {
-    transition_to_ia = "AFTER_14_DAYS"
+    transition_to_ia = var.transition_to_ia
     }
+    tags = merge(var.tags,)
   }
-
+ 
   resource "aws_efs_mount_target" "efs_mount_target" {
     for_each = {
     for k, v in slice(var.private_subnet_ids, 0, 2) : k => v
