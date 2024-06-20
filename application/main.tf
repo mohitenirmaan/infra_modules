@@ -155,7 +155,8 @@
       # }
       tags = merge(var.tags,)
     }
-   resource "aws_alb_listener" "http_listener" {
+  
+  resource "aws_alb_listener" "http_listener" {
     load_balancer_arn = aws_lb.pub_alb.id
     port              = var.listener_port
     protocol          = var.listener_protocol
@@ -164,7 +165,7 @@
       type             = "forward"
       target_group_arn = aws_lb_target_group.target_groups[0].arn
     }
-
+  }
    #resource "aws_lb_listener" "https_listener" {
     #  port              = var.listener_port
     # protocol          = var.listener_protocol
