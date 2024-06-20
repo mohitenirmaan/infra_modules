@@ -180,7 +180,7 @@
 
   resource "aws_lb_listener_rule" "domain_based_rules" {
     count       = length(var.listener_rules)
-    listener_arn = aws_lb_listener.http_listener.arn
+    listener_arn = aws_alb_listener.http_listener.arn
 
     action {
       type             = "forward"
