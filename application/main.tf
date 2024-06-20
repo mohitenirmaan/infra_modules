@@ -25,27 +25,6 @@
   } 
     tags = merge(var.tags,)
   }
-# ============Elastic file Storage=================#
-  
-  resource "aws_efs_file_system" "en-efs" {
-    creation_token = var.creation_token
-    encrypted = true
-    throughput_mode = "elastic"
-    lifecycle_policy {
-    transition_to_ia = "AFTER_14_DAYS"
-    }
-  }
-
-  resource "aws_efs_mount_target" "efs_mount_target" {
-    for_each = {
-    for k, v in slice(var.private_subnet_ids, 0, 2) : k => v
-    }
-    file_system_id = aws_efs_file_system.en-efs.id
-    subnet_id      = each.value
-
-    # Security group allowing access from instances
-    security_groups = [aws_security_group.security_grp[2].id]
-  }
 
 # ============Launch Template======================= #
 
@@ -66,7 +45,7 @@
     }
     user_data = base64encode(<<-EOF
               #!/bin/bash
-              EFS_ID="${aws_efs_file_system.en-efs.id}"
+              EFS_ID="${var.efs_id}"
               REGION="us-east-1"
               MOUNT_POINT="/var/www/ibai.org/public_html/storage/"
 
