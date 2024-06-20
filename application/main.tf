@@ -160,8 +160,8 @@
      load_balancer_arn = aws_lb.pub_alb.id
      port              = var.listener_port
      protocol          = var.listener_protocol
-     ssl_policy        = var.ssl_policy  # "ELBSecurityPolicy-2016-08"
-     certificate_arn   = var.certificate_arn 
+     # ssl_policy        = var.ssl_policy  # "ELBSecurityPolicy-2016-08"
+     # certificate_arn   = var.certificate_arn 
 
      default_action {
        type             = "forward"
