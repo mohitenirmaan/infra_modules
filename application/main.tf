@@ -69,8 +69,8 @@
     user_data = base64encode(<<-EOF
               #!/bin/bash
               EFS_ID="${aws_efs_file_system.en-efs.id}"
-              REGION="us-east-1"
-              MOUNT_POINT="/var/www/ibai.org/public_html/storage/"
+              REGION="ap-south-1"
+              MOUNT_POINT="${var.mount_point}"    #/var/www/ibai.org/public_html/storage/
 
               sudo apt-get update
               sudo apt-get install -y amazon-efs-utils nfs-common
