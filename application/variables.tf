@@ -43,6 +43,9 @@ variable "template_description" {
 variable "volume_size" {
   type = list(string)
 }
+variable "volume_type" {
+  type =  string
+}
 variable "image_ids" {
  type = list(string)
 }
