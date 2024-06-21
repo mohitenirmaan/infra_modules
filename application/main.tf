@@ -62,6 +62,7 @@
       ebs {
         volume_size           = var.volume_size[count.index]
         delete_on_termination = true
+        volume_type           = var.volume_type
       }
     }
     user_data = base64encode(<<-EOF
