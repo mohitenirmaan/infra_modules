@@ -34,6 +34,7 @@
     lifecycle_policy {
     transition_to_ia = "AFTER_14_DAYS"
     }
+   tags = merge(var.tags,)
   }
 
   resource "aws_efs_mount_target" "efs_mount_target" {
