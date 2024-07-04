@@ -25,29 +25,6 @@
   } 
     tags = merge(var.tags,)
   }
-# ============Elastic file Storage=================#
-  
-  resource "aws_efs_file_system" "en-efs" {
-    creation_token = var.creation_token
-    encrypted = true
-    throughput_mode = "elastic"
-    lifecycle_policy {
-    transition_to_ia = "AFTER_14_DAYS"
-    }
-   tags = merge(var.tags,)
-  }
-
-  resource "aws_efs_mount_target" "efs_mount_target" {
-    for_each = {
-    for k, v in slice(var.private_subnet_ids, 0, 2) : k => v
-    }
-    file_system_id = aws_efs_file_system.en-efs.id
-    subnet_id      = each.value
-
-    # Security group allowing access from instances
-    security_groups = [aws_security_group.security_grp[2].id]
-  }
-
 # ============Launch Template======================= #
 
   resource "aws_launch_template" "API-template" {
@@ -67,19 +44,7 @@
       }
     }
     user_data = base64encode(<<-EOF
-              #!/bin/bash
-              EFS_ID="${aws_efs_file_system.en-efs.id}"
-              REGION="ap-south-1"
-              MOUNT_POINT="${var.mount_point}"    #/var/www/ibai.org/public_html/storage/
-
-              sudo apt-get update
-              sudo apt-get install -y amazon-efs-utils nfs-common
-
-              sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport $EFS_ID.efs.$REGION.amazonaws.com:/ $MOUNT_POINT
-
-              # Add the mount to /etc/fstab for persistence
-              echo "$EFS_ID.efs.$REGION.amazonaws.com:/ $MOUNT_POINT efs defaults,_netdev 0 0" | sudo tee -a /etc/fstab
-            EOF
+              EOF
       )
     tags = merge(var.tags,)
   }
