@@ -28,9 +28,7 @@ variable "security_groups" {
     }))
   }))
 }
-variable "creation_token" {
-  type = string
-}
+
 variable "egress-cidr_blocks" {
   type = list(string)
 }
@@ -57,9 +55,6 @@ variable "key_names" {
 }
 variable "block_device_name" {
   type = list(string)
-}
-variable "mount_point" {
-  type = string
 }
 variable "env" {
   type    = string
