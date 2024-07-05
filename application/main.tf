@@ -153,7 +153,7 @@
 
      default_action {
        type             = "forward"
-       target_group_arn = aws_lb_target_group.target_groups[count.index].arn
+       target_group_arn = aws_lb_target_group.target_groups.arn
      }
    }
 
