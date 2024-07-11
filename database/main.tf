@@ -6,7 +6,7 @@ resource "aws_security_group" "rds_sg" {
     from_port   = var.db_port
     to_port     = var.db_port
     protocol    = "TCP"
-    cidr_blocks = ["var.db_cidr_blocks"]
+    cidr_blocks = [var.db_cidr_blocks]
   }
   egress {
       from_port   = 0
