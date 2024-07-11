@@ -13,7 +13,7 @@ variable "db_port" {
   type = string
 }
 variable "db_cidr_blocks" {
-  type = string
+  type = list(string)
 }
 variable "private_subnet_ids" {
  type = list(string) 
