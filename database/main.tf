@@ -3,10 +3,10 @@ resource "aws_security_group" "rds_sg" {
   vpc_id      = var.vpc_id
   ingress {
     description = "for test rds"
-    from_port   = 3306
-    to_port     = 3306
+    from_port   = var.db_port
+    to_port     = var.db_port
     protocol    = "TCP"
-    cidr_blocks = ["10.0.2.0/24"]
+    cidr_blocks = ["var.db_cidr_blocks"]
   }
   egress {
       from_port   = 0
