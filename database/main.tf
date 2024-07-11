@@ -2,7 +2,7 @@ resource "aws_security_group" "rds_sg" {
   name        = var.rds_sg_name
   vpc_id      = var.vpc_id
   ingress {
-    description = "for test rds"
+    description = "for database access"
     from_port   = var.db_port
     to_port     = var.db_port
     protocol    = "TCP"
