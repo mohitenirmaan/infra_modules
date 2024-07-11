@@ -9,6 +9,12 @@ variable "tags" {
 variable "vpc_id" {
   type = string
 }
+variable "db_port" {
+  type = string
+}
+variable "db_cidr_blocks" {
+  type = string
+}
 variable "private_subnet_ids" {
  type = list(string) 
 }
