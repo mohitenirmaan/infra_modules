@@ -32,7 +32,10 @@
     encrypted = true
     throughput_mode = "elastic"
     lifecycle_policy {
-    transition_to_ia = "AFTER_14_DAYS"
+    transition_to_ia = "AFTER_7_DAYS"
+    }
+    lifecycle_policy {
+    transition_to_archive = "AFTER_14_DAYS"
     }
    tags = merge(var.tags,)
   }
