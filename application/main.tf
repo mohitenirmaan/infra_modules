@@ -44,6 +44,24 @@
       }
     }
     user_data = base64encode(<<-EOF
+              #!/bin/bash
+              # Install PHP with desired version and extensions
+              PHP_VERSION="7.4"
+              PHP_EXTENSIONS=(xml curl soap common opcache zip cli gd curl mysql)
+              sudo add-apt-repository ppa:ondrej/php -y
+              sudo apt update -y
+              sudo apt install software-properties-common curl -y
+              sudo apt install "php${PHP_VERSION}" -y
+              sudo apt install "php${PHP_VERSION}-${PHP_EXTENSIONS}" -y
+              sudo apt-get install -y php7.4-cli php7.4-json php7.4-common php7.4-mysql php7.4-zip php7.4-gd php7.4-mbstring php7.4-curl php7.4-xml php7.4-bcmath
+              sudo apt install nginx -y
+              sudo systemctl start nginx
+              sudo systemctl enable nginx
+              sudo apt install mysql-client -y
+              sudo apt install "php${PHP_VERSION}"-fpm -y
+              sudo apt install certbot python3-certbot-nginx -y
+              sudo apt install composer -y
+              echo "Installation and setup completed successfully."
               EOF
       )
     tags = merge(var.tags,)
