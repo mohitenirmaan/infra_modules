@@ -1,3 +1,4 @@
+
 variable "name" {
   description = "Name that will include to every resources"
   type = string
@@ -8,6 +9,12 @@ variable "tags" {
 }
 variable "vpc_id" {
   type = string
+}
+variable "db_port" {
+  type = string
+}
+variable "db_cidr_blocks" {
+  type = list(string)
 }
 variable "private_subnet_ids" {
  type = list(string) 
