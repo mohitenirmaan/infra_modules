@@ -105,13 +105,13 @@ variable "target_port" {
 }
 variable "health_check" {
   type    = list(object({
-    path                = list(string)
-    interval            = list(string)
-    protocol            = list(string)
-    matcher             = list(string)
-    timeout             = list(string)
-    unhealthy_threshold = list(string)
-    healthy_threshold   = list(string)
+    path                = string
+    interval            = string
+    protocol            = string
+    matcher             = string
+    timeout             = string
+    unhealthy_threshold = string
+    healthy_threshold   = string
    }))
 }
 
