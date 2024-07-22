@@ -163,7 +163,7 @@
 
     action {
       type             = "forward"
-      target_group_arn = aws_lb_target_group.target_groups[0].arn
+      target_group_arn = aws_lb_target_group.target_groups[count.index].arn
     }
       condition {
       host_header {
