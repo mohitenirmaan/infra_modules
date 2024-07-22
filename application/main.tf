@@ -108,13 +108,13 @@
     vpc_id      = var.vpc_id
   
     health_check {
-    path                = var.health_check.path
-    interval            = var.health_check.interval
-    protocol            = var.health_check.protocol
-    matcher             = var.health_check.matcher
-    timeout             = var.health_check.timeout
-    unhealthy_threshold = var.health_check.unhealthy_threshold
-    healthy_threshold   = var.health_check.healthy_threshold
+    path                = var.health_check[count.index].path
+    interval            = var.health_check[count.index].interval
+    protocol            = var.health_check[count.index].protocol
+    matcher             = var.health_check[count.index].matcher
+    timeout             = var.health_check[count.index].timeout
+    unhealthy_threshold = var.health_check[count.index].unhealthy_threshold
+    healthy_threshold   = var.health_check[count.index].healthy_threshold
     }
     tags = merge(var.tags)
   }
