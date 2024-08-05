@@ -26,39 +26,39 @@ resource "aws_instance" "db_server" {
   vpc_security_group_ids      = [aws_security_group.rds_sg.id]
 
   # User data script to run on instance startup
-  user_data = <<-EOF
-    #!/bin/bash
+  user_data = base64encode( <<-EOF
+        #!/bin/bash
 
-    # Variables
-    MYSQL_ROOT_PASSWORD="Password_123"
-    MYSQL_ADMIN_USER="admin"
-    MYSQL_ADMIN_PASSWORD="Password_123"
+        # Variables
+        MYSQL_ROOT_PASSWORD="Password_123"
+        MYSQL_ADMIN_USER="admin"
+        MYSQL_ADMIN_PASSWORD="Password_123"
 
-    # Update package lists
-    apt update -y
+        # Update package lists
+        sudo apt update -y
 
-    # Install MySQL Server
-    DEBIAN_FRONTEND=noninteractive apt install mysql-server -y
+        # Install MySQL Server
+        DEBIAN_FRONTEND=noninteractive apt install mysql-server -y
 
-    # Wait for MySQL service to be ready
-    until systemctl is-active --quiet mysql; do
-      echo "Waiting for MySQL to start..."
-      sleep 5
-    done
+        # Wait for MySQL service to be ready
+        until systemctl is-active --quiet mysql; do
+          echo "Waiting for MySQL to start..."
+        sleep 5
+        done
 
-    # Secure MySQL installation
-    mysql --execute="ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${MYSQL_ROOT_PASSWORD}';"
-    mysql --execute="FLUSH PRIVILEGES;"
+        # Secure MySQL installation
+        mysql --execute="ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${MYSQL_ROOT_PASSWORD}';"
+        mysql --execute="FLUSH PRIVILEGES;"
 
-    # Create a new admin user with access from anywhere
-    mysql --user=root --password="${MYSQL_ROOT_PASSWORD}" --execute="CREATE USER '${MYSQL_ADMIN_USER}'@'%' IDENTIFIED WITH mysql_native_password BY '${MYSQL_ADMIN_PASSWORD}';"
-    mysql --user=root --password="${MYSQL_ROOT_PASSWORD}" --execute="GRANT ALL PRIVILEGES ON *.* TO '${MYSQL_ADMIN_USER}'@'%' WITH GRANT OPTION;"
-    mysql --user=root --password="${MYSQL_ROOT_PASSWORD}" --execute="FLUSH PRIVILEGES;"
+        # Create a new admin user with access from anywhere
+        mysql --user=root --password="${MYSQL_ROOT_PASSWORD}" --execute="CREATE USER '${MYSQL_ADMIN_USER}'@'%' IDENTIFIED WITH mysql_native_password BY '${MYSQL_ADMIN_PASSWORD}';"
+        mysql --user=root --password="${MYSQL_ROOT_PASSWORD}" --execute="GRANT ALL PRIVILEGES ON *.* TO '${MYSQL_ADMIN_USER}'@'%' WITH GRANT OPTION;"
+        mysql --user=root --password="${MYSQL_ROOT_PASSWORD}" --execute="FLUSH PRIVILEGES;"
 
-    # Print completion message
-    echo "MySQL installation and user setup completed successfully."
-  EOF
-
+        # Print completion message
+        echo "MySQL installation and user setup completed successfully."
+      EOF
+  )
   tags = merge(
     {
       "Name" = format("%s-Db-Mysql", var.name)
