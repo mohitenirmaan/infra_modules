@@ -18,44 +18,55 @@ resource "aws_security_group" "rds_sg" {
 }
 
 resource "aws_instance" "db_server" {
-    instance_type               = lookup(var.db_instance_config, "itype")
-    subnet_id                   = var.private_subnet_ids[2]
-    ami                         = lookup(var.db_instance_config, "ami")
-    associate_public_ip_address = lookup(var.db_instance_config, "publicip")
-    key_name                    = lookup(var.db_instance_config, "keyname")
-    vpc_security_group_ids      = [aws_security_group.rds_sg.id]
-    user_data = <<-EOF
-      #!/bin/bash
+  instance_type               = lookup(var.db_instance_config, "itype")
+  subnet_id                   = var.private_subnet_ids[2]
+  ami                         = lookup(var.db_instance_config, "ami")
+  associate_public_ip_address = lookup(var.db_instance_config, "publicip")
+  key_name                    = lookup(var.db_instance_config, "keyname")
+  vpc_security_group_ids      = [aws_security_group.rds_sg.id]
 
-      # Variables
-      MYSQL_ROOT_PASSWORD="Password_123"
-      MYSQL_ADMIN_USER="admin"
-      MYSQL_ADMIN_PASSWORD="Password_123"
+  # User data script to run on instance startup
+  user_data = <<-EOF
+    #!/bin/bash
 
-      # Update package lists
-      sudo apt update -y
+    # Variables
+    MYSQL_ROOT_PASSWORD="Password_123"
+    MYSQL_ADMIN_USER="admin"
+    MYSQL_ADMIN_PASSWORD="Password_123"
 
-      # Install MySQL Server
-      sudo apt install mysql-server -y
+    # Update package lists
+    apt update -y
 
-      # Secure MySQL installation
-      sudo mysql --execute="ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${MYSQL_ROOT_PASSWORD}';"
-      sudo mysql --execute="FLUSH PRIVILEGES;"
+    # Install MySQL Server
+    DEBIAN_FRONTEND=noninteractive apt install mysql-server -y
 
-      # Create a new admin user with access from anywhere
-      sudo mysql --user=root --password="${MYSQL_ROOT_PASSWORD}" --execute="CREATE USER '${MYSQL_ADMIN_USER}'@'%' IDENTIFIED WITH mysql_native_password BY '${MYSQL_ADMIN_PASSWORD}';"
-      sudo mysql --user=root --password="${MYSQL_ROOT_PASSWORD}" --execute="GRANT ALL PRIVILEGES ON *.* TO '${MYSQL_ADMIN_USER}'@'%' WITH GRANT OPTION;"
-      sudo mysql --user=root --password="${MYSQL_ROOT_PASSWORD}" --execute="FLUSH PRIVILEGES;"
+    # Wait for MySQL service to be ready
+    until systemctl is-active --quiet mysql; do
+      echo "Waiting for MySQL to start..."
+      sleep 5
+    done
 
-      # Print completion message
-      echo "MySQL installation and user setup completed successfully."
-    EOF
-    tags = merge(
+    # Secure MySQL installation
+    mysql --execute="ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${MYSQL_ROOT_PASSWORD}';"
+    mysql --execute="FLUSH PRIVILEGES;"
+
+    # Create a new admin user with access from anywhere
+    mysql --user=root --password="${MYSQL_ROOT_PASSWORD}" --execute="CREATE USER '${MYSQL_ADMIN_USER}'@'%' IDENTIFIED WITH mysql_native_password BY '${MYSQL_ADMIN_PASSWORD}';"
+    mysql --user=root --password="${MYSQL_ROOT_PASSWORD}" --execute="GRANT ALL PRIVILEGES ON *.* TO '${MYSQL_ADMIN_USER}'@'%' WITH GRANT OPTION;"
+    mysql --user=root --password="${MYSQL_ROOT_PASSWORD}" --execute="FLUSH PRIVILEGES;"
+
+    # Print completion message
+    echo "MySQL installation and user setup completed successfully."
+  EOF
+
+  tags = merge(
     {
       "Name" = format("%s-Db-Mysql", var.name)
     },
-    var.tags, )
-  }
+    var.tags
+  )
+}
+
 #===============RDS======================# 
 # resource "aws_db_subnet_group" "rds_subnet_group" {
 #   name       = var.db_subnet_group_name
