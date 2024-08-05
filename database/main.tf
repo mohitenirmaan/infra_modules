@@ -27,35 +27,20 @@ resource "aws_instance" "db_server" {
 
   user_data = base64encode(<<-EOF
     #!/bin/bash
-
-    # Variables
-    MYSQL_ROOT_PASSWORD="Password_123"
-    MYSQL_ADMIN_USER="admin"
-    MYSQL_ADMIN_PASSWORD="Password_123"
-
     # Update package lists
-    sudo apt-get update -y
+    sudo apt update -y
 
-    # Install MySQL Server
-    DEBIAN_FRONTEND=noninteractive sudo apt-get install mysql-server -y
+    # Install dependencies
+    sudo apt install -y wget
 
-    # Wait for MySQL service to be ready
-    until systemctl is-active --quiet mysql; do
-      echo "Waiting for MySQL to start..."
-      sleep 5
-    done
+    # Download the MySQL setup script
+    wget https://raw.githubusercontent.com/mohitenirmaan/infra_modules/main/mysql.sh -O /tmp/mysql.sh
 
-    # Secure MySQL installation
-    sudo mysql --execute=ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${MYSQL_ROOT_PASSWORD}';
-    sudo mysql --execute=FLUSH PRIVILEGES;
+    # Make the script executable
+    chmod +x /tmp/mysql.sh
 
-    # Create a new admin user with access from anywhere
-    sudo mysql --user=root --password=${MYSQL_ROOT_PASSWORD} --execute=CREATE USER '${MYSQL_ADMIN_USER}'@'%' IDENTIFIED WITH mysql_native_password BY '${MYSQL_ADMIN_PASSWORD}';
-    sudo mysql --user=root --password=${MYSQL_ROOT_PASSWORD} --execute=GRANT ALL PRIVILEGES ON *.* TO '${MYSQL_ADMIN_USER}'@'%' WITH GRANT OPTION;
-    sudo mysql --user=root --password=${MYSQL_ROOT_PASSWORD} --execute=FLUSH PRIVILEGES;
-
-    # Print completion message
-    echo "MySQL installation and user setup completed successfully."
+    # Run the MySQL setup script
+    /tmp/mysql.sh
   EOF
   )
 
