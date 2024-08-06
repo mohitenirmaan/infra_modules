@@ -2,7 +2,7 @@
 
 # Variables
 MYSQL_ROOT_PASSWORD="Password_123"
-MYSQL_ADMIN_USER="admin_user"
+MYSQL_ADMIN_USER="admin"
 MYSQL_ADMIN_PASSWORD="Password_123"
 
 # Update package lists
