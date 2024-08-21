@@ -24,14 +24,20 @@ resource "aws_instance" "db_server" {
   associate_public_ip_address = lookup(var.db_instance_config, "publicip")
   key_name                    = lookup(var.db_instance_config, "keyname")
   vpc_security_group_ids      = [aws_security_group.rds_sg.id]
-
+  root_block_device {
+    volume_size = 30
+    volume_type = "gp3" # Optional, you can change this to gp2, io1, etc.
+  }
   user_data = base64encode(<<-EOF
     #!/bin/bash
     # Update package lists
     sudo apt update -y
 
     # Install dependencies
-    sudo apt install -y wget
+    sudo apt install -y wget unzip 
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+    unzip awscliv2.zip
+    sudo ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
 
     # Download the MySQL setup script
     wget https://raw.githubusercontent.com/mohitenirmaan/infra_modules/main/mysql.sh -O /tmp/mysql.sh
