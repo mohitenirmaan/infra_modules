@@ -55,9 +55,6 @@ variable "instance_types" {
 variable "key_names" {
   type = list(string)
 }
-variable "block_device_name" {
-  type = list(string)
-}
 variable "env" {
   type    = string
 }
