@@ -58,9 +58,6 @@ variable "key_names" {
 variable "block_device_name" {
   type = list(string)
 }
-variable "mount_point" {
-  type = string
-}
 variable "env" {
   type    = string
 }
