@@ -19,6 +19,12 @@ variable "rds_sg_name" {
 # variable "inress-cidr_blocks" {
 #  type = list(string)
 # }
+variable "db_port" {
+  type = string
+}
+variable "db_cidr_blocks" {
+  type = list(string)
+}
 variable "db_subnet_group_name" {
   type = string
 }
