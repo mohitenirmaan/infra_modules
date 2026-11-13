@@ -35,7 +35,15 @@
     instance_type          = var.instance_types[count.index]
     key_name               = var.key_names[count.index]
     vpc_security_group_ids = [aws_security_group.security_grp[count.index + 2].id]
-      
+
+    block_device_mappings {
+      device_name = var.block_device_name[count.index]
+      ebs {
+        volume_size           = var.volume_size[count.index]
+        delete_on_termination = true
+        encrypted             = true
+        volume_type           = var.volume_type
+    }
     user_data = base64encode(<<-EOF
             EOF
       )
