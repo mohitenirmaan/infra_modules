@@ -44,6 +44,9 @@ variable "volume_size" {
 variable "volume_type" {
   type =  string
 }
+variable "block_device_name" {
+  type = list(string)
+}
 variable "image_ids" {
  type = list(string)
 }
